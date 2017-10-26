@@ -23,4 +23,15 @@ describe('QueryGenerator', () => {
 
     expect(result).to.equal('a=%7C&b=%26');
   })
+  
+  it('handle arrays', () => {
+    const result = g.generate({
+      a: [
+        1, 2, 3, '&'
+      ],
+      b: 'bar'
+    })
+
+    expect(result).to.equal('a[]=1&a[]=2&a[]=3&a[]=%26&b=bar');
+  })
 });
