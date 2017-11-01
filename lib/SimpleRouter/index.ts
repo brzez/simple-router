@@ -1,3 +1,6 @@
+import QueryGenerator from '../QueryGenerator'
+import ParamMatcher from '../ParamMatcher'
+
 export interface RouteDefinition {
   name: string;
   path: string;
@@ -11,7 +14,11 @@ export interface GeneratedRoute {
 export interface RouteParams {
   [name: string]: any;
 }
-export interface SimpleRouterConfig {}
+
+export interface SimpleRouterConfig {
+  queryGenerator: QueryGenerator,
+  paramMatcher: ParamMatcher,
+}
 
 export default class SimpleRouter {
   protected routes: RouteDefinition[];
@@ -23,10 +30,13 @@ export default class SimpleRouter {
   }
 
   protected getDefaultConfig (): SimpleRouterConfig {
-    return {}
+    return {
+      queryGenerator: new QueryGenerator(),
+      paramMatcher: new ParamMatcher(),
+    }
   }
 
-  public generate (name: string, params?: RouteParams): GeneratedRoute {
+  public generate (name: string, params: RouteParams = {}): GeneratedRoute {
     const route = this.routes.filter(({name: _name}) => _name === name).shift();
     
     if (route === undefined) {
@@ -36,14 +46,17 @@ export default class SimpleRouter {
     const {method} = route;
     let {path} = route;
 
-    if (params) {
-      path = this.applyParams(path, params);
-    }
+    path = this.applyParams(path, params);
 
     return {method, path}
   }
 
   protected applyParams (path: string, params: RouteParams): string {
-    return path;
+    const {match, notIncluded} = this.config.paramMatcher.create(path, params);
+    const query = this.config.queryGenerator.generate(notIncluded);
+    if (!query) {
+      return match;
+    }
+    return `${match}?${query}`;
   }
 }

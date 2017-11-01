@@ -6,7 +6,7 @@ import SimpleRouter from './index'
 describe('SimpleRouter', () => {
   const createRouter = () => new SimpleRouter([
     {name: 'test_route', path: '/test/route/', method: 'get'},
-    {name: 'with_params', path: '/test/route/:param', method: 'get'}
+    {name: 'with_params', path: '/test/route/{param}', method: 'get'}
   ]);
 
   it('should generate simple url', () => {
@@ -26,7 +26,7 @@ describe('SimpleRouter', () => {
     const router = createRouter();
     const route = router.generate('test_route', {test: 123, tost: 321})
 
-    expect(route.path).to.equal('/test/route?test=123&tost=321');
+    expect(route.path).to.equal('/test/route/?test=123&tost=321');
   })
 
   it('should replace route params', () => {
@@ -38,7 +38,6 @@ describe('SimpleRouter', () => {
 
   it('should throw when no (required) params given', () => {
     const router = createRouter();
-
     expect(() => router.generate('with_params')).to.throw();
   })
 });
