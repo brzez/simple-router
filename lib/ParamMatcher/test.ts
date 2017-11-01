@@ -15,7 +15,7 @@ describe('ParamMatcher', () => {
 
     it('throws on duplicate params', () => {
       expect(
-        matcher.match('/{a}/{a}')
+        () => matcher.match('/{a}/{a}')
       ).to.throw();
     })
   })

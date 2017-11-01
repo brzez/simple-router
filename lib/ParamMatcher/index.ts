@@ -23,7 +23,12 @@ export default class ParamMatcher {
 
 		let result;
 		while ((result = rex.exec(path)) !== null) {
-			matched[result[2]] = result[1]
+			const name = result[2];
+			const match = result[1];
+			if (name in matched) {
+				throw new Error(`Key ${name} already exists in ${path}`);
+			}
+			matched[name] = match;
 		}
 
 		return matched;
