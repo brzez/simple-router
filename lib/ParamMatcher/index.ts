@@ -4,6 +4,11 @@ export interface MatchedParams {
 	[name: string]: string;
 }
 
+export interface MatchResult {
+	match: string;
+	notIncluded: RouteParams;
+}
+
 export default class ParamMatcher {
 	protected regex: RegExp;
 
@@ -34,7 +39,28 @@ export default class ParamMatcher {
 		return matched;
 	}
 
-	create (path: string, args: RouteParams): any {
+	create (path: string, args: RouteParams): MatchResult {
+		const matched = this.match(path);
+		const notIncluded: RouteParams = {};
 
+		let match = path;
+
+		Object.keys(args).forEach(name => {
+			const value = args[name];
+			if (name in matched) {
+				match = match.replace(matched[name], value);
+				delete matched[name];
+				return
+			}
+
+			notIncluded[name] = value;
+		});
+
+		const missing = Object.keys(matched);
+		if (missing.length > 0) {
+			throw new Error(`Missing params ${missing.join(',')} for path ${path}`);
+		}
+
+		return {match, notIncluded};
 	}
 }

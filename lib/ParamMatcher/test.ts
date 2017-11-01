@@ -22,13 +22,12 @@ describe('ParamMatcher', () => {
 
   describe('#create', () => {
     it('sets params', () => {
-      const result = matcher.create('/{foo}/{bar}', {foo: 123, bar: 321});
-      expect(result).to.equal('/123/321');
+      const {match} = matcher.create('/{foo}/{bar}', {foo: 123, bar: 321});
+      expect(match).to.equal('/123/321');
     })
 
     it('throws on missing params', () => {
-      const result = () => matcher.create('/{foo}/{bar}', {foo: 123});
-      expect(result).to.throw();
+      expect(() => matcher.create('/{foo}/{bar}', {foo: 123})).to.throw();
     })
   })
 });
