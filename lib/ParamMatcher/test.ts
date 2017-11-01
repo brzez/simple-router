@@ -8,6 +8,9 @@ describe('ParamMatcher', () => {
   describe('#match', () => {
     it('matches params', () => {
       const result = matcher.match('/foo/{test}/{a_2}/{thing}');
+      expect(result).to.include({test: '{test}'})
+      expect(result).to.include({a_2: '{a_2}'})
+      expect(result).to.include({thing: '{thing}'})
     })
 
     it('throws on duplicate params', () => {
